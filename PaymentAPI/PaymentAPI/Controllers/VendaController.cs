@@ -45,12 +45,21 @@ namespace PaymentAPI.Controllers
 
             return CreatedAtAction(nameof(BuscarVenda), new { id = venda.Id }, venda);
         }
-        /*
-        [HttpPatch("{id}")]
+
+        [HttpPut("AtualizarVenda/{id}")]
         public IActionResult AtualizarVenda(int id, EnumStatusVenda status)
         {
-            
+            var venda = _context.Vendas.Find(id);
+
+            if (venda is null)
+                return NotFound();
+
+            venda.StatusVenda = status;
+
+            _context.Vendas.Update(venda);
+            _context.SaveChanges();
+
+            return Ok(venda);
         }
-        */
     }
 }
