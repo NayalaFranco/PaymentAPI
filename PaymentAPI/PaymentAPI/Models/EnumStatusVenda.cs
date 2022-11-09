@@ -2,5 +2,10 @@
 {
     public class EnumStatusVenda
     {
+        AguardandoPagamento,
+        PagamentoAprovado,
+        EnviadoParaTransportadora,
+        Entregue,
+        Cancelado
     }
 }
