@@ -1,8 +1,25 @@
+using Microsoft.EntityFrameworkCore;
+using PaymentAPI.Context;
+using System.Text.Json.Serialization;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddControllers();
+//Usando EntentyFrameworkCore.InMemory
+//Para simular uma db na ram
+builder.Services
+    .AddDbContext<PaymentContext>(options => options
+    .UseInMemoryDatabase("dbLoja"));
+
+
+builder.Services.AddControllers()
+    //comando para converter as enums em string.
+    .AddJsonOptions(options =>
+    options.JsonSerializerOptions
+    .Converters.Add(new JsonStringEnumConverter()));
+
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
