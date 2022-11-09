@@ -1,6 +1,6 @@
 ﻿namespace PaymentAPI.Models
 {
-    public class EnumStatusVenda
+    public enum EnumStatusVenda
     {
         AguardandoPagamento,
         PagamentoAprovado,
