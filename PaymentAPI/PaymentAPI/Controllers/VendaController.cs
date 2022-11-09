@@ -31,9 +31,15 @@ namespace PaymentAPI.Controllers
         }
 
 
-        [HttpPost]
+        [HttpPost("RegistrarVenda")]
         public IActionResult RegistrarVenda(Venda venda)
         {
+            if (venda.Vendedor is null)
+                return NotFound("Vendedor não encontrado");
+
+            if (venda.ItensVendidos.Count() <= 0)
+                return BadRequest("É preciso ter ao menos 1 produto");
+
             _context.Add(venda);
             _context.SaveChanges();
 
