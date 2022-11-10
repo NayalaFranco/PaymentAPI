@@ -56,39 +56,36 @@ namespace PaymentAPI.Controllers
 
 
             //loop para só permitir mudanças especificas
-            /*
-            * De: `Aguardando pagamento` Para: `Pagamento Aprovado`
-            * De: `Aguardando pagamento` Para: `Cancelada`
-            * De: `Pagamento Aprovado` Para: `Enviado para Transportadora`
-            * De: `Pagamento Aprovado` Para: `Cancelada`
-            * De: `Enviado para Transportador`. Para: `Entregue`
-            */
-            //nota: porque se comparar enums com == dá certo,
-            //mas se comparar com != a comparação buga e retorna tudo true?
 
+            //nota: porque se comparar enums com == dá certo,
+            //mas se comparar com != a comparação buga e retorna tudo true? ;-;
+
+            //De: `Aguardando pagamento` Para: `Pagamento Aprovado`
+            //De: `Aguardando pagamento` Para: `Cancelada`
             if (venda.StatusVenda == EnumStatusVenda.AguardandoPagamento
                 && (status == EnumStatusVenda.PagamentoAprovado || status == EnumStatusVenda.Cancelado))
                 {
-                    return AtualizaESalvaStatus(venda, status);
+                    return SalvaStatus(venda, status);
                 }
-                
-            
+            //De: `Pagamento Aprovado` Para: `Enviado para Transportadora`
+            //De: `Pagamento Aprovado` Para: `Cancelada`
             else if (venda.StatusVenda == EnumStatusVenda.PagamentoAprovado &&
                 status == EnumStatusVenda.EnviadoParaTransportadora || status == EnumStatusVenda.Cancelado)
             {
-                return AtualizaESalvaStatus(venda, status);
+                return SalvaStatus(venda, status);
             }
+            //De: `Enviado para Transportador`. Para: `Entregue`
             else if (venda.StatusVenda == EnumStatusVenda.PagamentoAprovado &&
                status == EnumStatusVenda.Entregue)
             {
-                return AtualizaESalvaStatus(venda, status);
+                return SalvaStatus(venda, status);
             }
             
             return BadRequest("Transição de Status Inválida!");
 
         }
 
-        private ObjectResult AtualizaESalvaStatus(Venda venda, EnumStatusVenda status)
+        private ObjectResult SalvaStatus(Venda venda, EnumStatusVenda status)
         {
             venda.StatusVenda = status;
 
