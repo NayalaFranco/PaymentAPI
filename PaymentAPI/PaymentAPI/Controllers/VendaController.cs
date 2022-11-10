@@ -65,29 +65,31 @@ namespace PaymentAPI.Controllers
             */
             //nota: porque se comparar enums com == dá certo,
             //mas se comparar com != a comparação buga e retorna tudo true?
+
             if (venda.StatusVenda == EnumStatusVenda.AguardandoPagamento
                 && (status == EnumStatusVenda.PagamentoAprovado || status == EnumStatusVenda.Cancelado))
                 {
-                    return BadRequest("deu");
+                    return AtualizaESalvaStatus(venda, status);
                 }
-            
-                //bad ou status code not modified?
                 
-            /*
+            
             else if (venda.StatusVenda == EnumStatusVenda.PagamentoAprovado &&
-                status != EnumStatusVenda.EnviadoParaTransportadora || status != EnumStatusVenda.Cancelado)
+                status == EnumStatusVenda.EnviadoParaTransportadora || status == EnumStatusVenda.Cancelado)
             {
-                //bad ou status code not modified?
-                return BadRequest("Transição de status inválida");
+                return AtualizaESalvaStatus(venda, status);
             }
             else if (venda.StatusVenda == EnumStatusVenda.PagamentoAprovado &&
-               status != EnumStatusVenda.Entregue)
+               status == EnumStatusVenda.Entregue)
             {
-                //bad ou status code not modified?
-                return BadRequest("Transição de status inválida");
+                return AtualizaESalvaStatus(venda, status);
             }
-            */
+            
+            return BadRequest("Transição de Status Inválida!");
 
+        }
+
+        private ObjectResult AtualizaESalvaStatus(Venda venda, EnumStatusVenda status)
+        {
             venda.StatusVenda = status;
 
             _context.Vendas.Update(venda);
@@ -95,5 +97,7 @@ namespace PaymentAPI.Controllers
 
             return Ok(venda);
         }
+
+
     }
 }
