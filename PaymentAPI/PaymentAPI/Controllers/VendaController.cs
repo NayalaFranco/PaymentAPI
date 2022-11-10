@@ -54,6 +54,40 @@ namespace PaymentAPI.Controllers
             if (venda is null)
                 return NotFound();
 
+
+            //loop para só permitir mudanças especificas
+            /*
+            * De: `Aguardando pagamento` Para: `Pagamento Aprovado`
+            * De: `Aguardando pagamento` Para: `Cancelada`
+            * De: `Pagamento Aprovado` Para: `Enviado para Transportadora`
+            * De: `Pagamento Aprovado` Para: `Cancelada`
+            * De: `Enviado para Transportador`. Para: `Entregue`
+            */
+            //nota: porque se comparar enums com == dá certo,
+            //mas se comparar com != a comparação buga e retorna tudo true?
+            if (venda.StatusVenda == EnumStatusVenda.AguardandoPagamento
+                && (status == EnumStatusVenda.PagamentoAprovado || status == EnumStatusVenda.Cancelado))
+                {
+                    return BadRequest("deu");
+                }
+            
+                //bad ou status code not modified?
+                
+            /*
+            else if (venda.StatusVenda == EnumStatusVenda.PagamentoAprovado &&
+                status != EnumStatusVenda.EnviadoParaTransportadora || status != EnumStatusVenda.Cancelado)
+            {
+                //bad ou status code not modified?
+                return BadRequest("Transição de status inválida");
+            }
+            else if (venda.StatusVenda == EnumStatusVenda.PagamentoAprovado &&
+               status != EnumStatusVenda.Entregue)
+            {
+                //bad ou status code not modified?
+                return BadRequest("Transição de status inválida");
+            }
+            */
+
             venda.StatusVenda = status;
 
             _context.Vendas.Update(venda);
