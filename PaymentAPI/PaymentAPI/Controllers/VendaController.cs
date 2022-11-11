@@ -37,15 +37,36 @@ namespace PaymentAPI.Controllers
 
 
         [HttpPost("RegistrarVenda")]
-        //analisando melhor essa venda, não está do jeito que eu queria
-        public IActionResult RegistrarVenda(Venda venda)
+        //analisando melhor esse metodo.
+        //foi dificil ter a ideia por falta de experiencia
+        //mas está começando a chegar proximo do que eu queria
+        public IActionResult RegistrarVenda(int IdVendedor, ICollection<Produto> ProdutosVendidos)
         {
+            Venda venda = new Venda();
+            var vendedor = _context.Vendedores.Find(IdVendedor);
+
+            if (vendedor is null)
+                return NotFound("Vendedor não encontrado.");
+
+            venda.StatusVenda = EnumStatusVenda.AguardandoPagamento;
+            venda.Vendedor = vendedor;
+
+            if (ProdutosVendidos.Count() == 0)
+                return BadRequest("É preciso adicionar ao menos 1 produto");
+
+            venda.ItensVendidos = ProdutosVendidos;
+
+            //talvez adicionar uma opção de por a data manual ou não
+            //e um if para verificar
+            venda.Data = DateTime.Now;
+
+            /*
             if (venda.Vendedor is null)
                 return NotFound("Vendedor não encontrado");
 
             if (venda.ItensVendidos.Count() <= 0)
                 return BadRequest("É preciso ter ao menos 1 produto");
-
+            */
             _context.Add(venda);
             _context.SaveChanges();
 
