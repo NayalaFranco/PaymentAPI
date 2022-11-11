@@ -21,17 +21,23 @@ namespace PaymentAPI.Controllers
         [HttpGet("BuscarVenda/{id}")]
         public IActionResult BuscarVenda(int id)
         {
+            /*   solução para corrigir um erro onde por conta do 
+             *   include se a venda não existisse ele não reconhecia
+             *   como nulo no if */
+            var vendaTeste = _context.Vendas.Find(id);
+
+            if (vendaTeste is null)
+                return NotFound();
+
             var venda = _context.Vendas.Where(x => x.Id == id)
                 .Include(v => v.Vendedor).Include(i => i.ItensVendidos);
-
-            if (venda is null)
-                return NotFound();
 
             return Ok(venda);
         }
 
 
         [HttpPost("RegistrarVenda")]
+        //analisando melhor essa venda, não está do jeito que eu queria
         public IActionResult RegistrarVenda(Venda venda)
         {
             if (venda.Vendedor is null)
