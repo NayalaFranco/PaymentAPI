@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using PaymentAPI.Context;
 using PaymentAPI.Models;
+using System.ComponentModel.DataAnnotations;
 
 namespace PaymentAPI.Controllers
 {
@@ -16,6 +17,15 @@ namespace PaymentAPI.Controllers
             _context = context;
         }
 
+        [HttpPost("GeraVendedoresTeste")]
+        public IActionResult GeraVendedoresTeste()
+        {
+            AdicionarVendedor("Daniel", "1111111111", "daniel@email.com", "(00) 0000-0000");
+            AdicionarVendedor("Nayala", "2222222222", "nay@mail.com", "(11) 1111-1111");
+
+            return Ok("Vendedores Gerados Para Teste!");
+        }
+
         [HttpGet("BuscarVendedor/{id}")]
         public IActionResult BuscarVendedor(int id)
         {
@@ -29,7 +39,7 @@ namespace PaymentAPI.Controllers
 
 
         [HttpPost("AdicionarVendedor")]
-        public IActionResult AdicionarVendedor(string Nome, string Cpf, string Email, string Telefone)
+        public IActionResult AdicionarVendedor([Required] string Nome, [Required] string Cpf, [Required][EmailAddress] string Email, [Required] string Telefone)
         {
             Vendedor vendedor = new Vendedor();
 
@@ -44,7 +54,7 @@ namespace PaymentAPI.Controllers
             return CreatedAtAction(nameof(BuscarVendedor), new { id = vendedor.Id }, vendedor);
         }
 
-        
+        /*
         [HttpDelete("DeletarVendedor/{id}")]
         public IActionResult DeletarVendedor(int id)
         {
@@ -57,6 +67,7 @@ namespace PaymentAPI.Controllers
             _context.SaveChanges();
             return NoContent();
         }
+        */
         
     }
 }
