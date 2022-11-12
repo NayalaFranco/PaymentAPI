@@ -2,7 +2,6 @@
 
 namespace PaymentAPI.Entities
 {
-    //Id, data, status, vendedor, itens vendidos
     public class Venda
     {
         public int Id { get; set; }

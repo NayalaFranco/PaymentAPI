@@ -1,6 +1,5 @@
 ﻿namespace PaymentAPI.Entities
 {
-    //Id, nome, cpf, email, telefone
     public class Vendedor
     {
         public int Id { get; set; }
