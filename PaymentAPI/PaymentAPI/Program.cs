@@ -14,7 +14,8 @@ builder.Services
 
 
 builder.Services.AddControllers()
-    //comando para converter as enums em string.
+    //comando para converter as enums em string
+    //para a seleção no swagger ficar mais visual.
     .AddJsonOptions(options =>
     options.JsonSerializerOptions
     .Converters.Add(new JsonStringEnumConverter()));
