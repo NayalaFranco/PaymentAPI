@@ -1,4 +1,4 @@
-﻿namespace PaymentAPI.Models
+﻿namespace PaymentAPI.Entities
 {
     public class Produto
     {

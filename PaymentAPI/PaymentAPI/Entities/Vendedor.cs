@@ -1,4 +1,4 @@
-﻿namespace PaymentAPI.Models
+﻿namespace PaymentAPI.Entities
 {
     //Id, nome, cpf, email, telefone
     public class Vendedor

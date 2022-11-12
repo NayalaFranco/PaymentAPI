@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using PaymentAPI.Context;
-using PaymentAPI.Models;
+using PaymentAPI.Entities;
 using System.ComponentModel.DataAnnotations;
 
 namespace PaymentAPI.Controllers

@@ -1,4 +1,6 @@
-﻿namespace PaymentAPI.Models
+﻿using PaymentAPI.Enums;
+
+namespace PaymentAPI.Entities
 {
     //Id, data, status, vendedor, itens vendidos
     public class Venda
