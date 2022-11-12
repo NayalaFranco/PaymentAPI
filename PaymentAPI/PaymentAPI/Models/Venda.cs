@@ -7,6 +7,6 @@
         public DateTime Data { get; set; }
         public EnumStatusVenda StatusVenda { get; set; }
         public Vendedor Vendedor { get; set; }
-        public ICollection<Produto> ItensVendidos { get; set; }
+        public List<Produto> ItensVendidos { get; set; }
     }
 }
