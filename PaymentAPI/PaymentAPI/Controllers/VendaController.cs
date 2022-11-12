@@ -97,12 +97,12 @@ namespace PaymentAPI.Controllers
             //De: `Pagamento Aprovado` Para: `Enviado para Transportadora`
             //De: `Pagamento Aprovado` Para: `Cancelada`
             else if (StatusAnterior == EnumStatusVenda.PagamentoAprovado &&
-                StatusNovo == EnumStatusVenda.EnviadoParaTransportadora || StatusNovo == EnumStatusVenda.Cancelado)
+                (StatusNovo == EnumStatusVenda.EnviadoParaTransportadora || StatusNovo == EnumStatusVenda.Cancelado))
             {
                 return true;
             }
             //De: `Enviado para Transportador`. Para: `Entregue`
-            else if (StatusAnterior == EnumStatusVenda.PagamentoAprovado &&
+            else if (StatusAnterior == EnumStatusVenda.EnviadoParaTransportadora &&
                StatusNovo == EnumStatusVenda.Entregue)
             {
                 return true;
