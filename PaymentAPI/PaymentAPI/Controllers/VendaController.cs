@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using PaymentAPI.Context;
 using PaymentAPI.Models;
+using System.ComponentModel.DataAnnotations;
 
 namespace PaymentAPI.Controllers
 {
@@ -15,8 +16,6 @@ namespace PaymentAPI.Controllers
         {
             _context = context;
         }
-
-        //BuscarVenda, RegistrarVenda, AtualizarVenda
 
         [HttpGet("BuscarVenda/{id}")]
         public IActionResult BuscarVenda(int id)
@@ -37,10 +36,7 @@ namespace PaymentAPI.Controllers
 
 
         [HttpPost("RegistrarVenda")]
-        //analisando melhor esse metodo.
-        //foi dificil ter a ideia por falta de experiencia
-        //mas está começando a chegar proximo do que eu queria
-        public IActionResult RegistrarVenda(int IdVendedor, ICollection<Produto> ProdutosVendidos)
+        public IActionResult RegistrarVenda([Required] int IdVendedor,[Required] DateTime Data, List<Produto> ProdutosVendidos)
         {
             Venda venda = new Venda();
             var vendedor = _context.Vendedores.Find(IdVendedor);
@@ -48,25 +44,14 @@ namespace PaymentAPI.Controllers
             if (vendedor is null)
                 return NotFound("Vendedor não encontrado.");
 
-            venda.StatusVenda = EnumStatusVenda.AguardandoPagamento;
-            venda.Vendedor = vendedor;
-
             if (ProdutosVendidos.Count() == 0)
                 return BadRequest("É preciso adicionar ao menos 1 produto");
 
+            venda.StatusVenda = EnumStatusVenda.AguardandoPagamento;
+            venda.Vendedor = vendedor;
             venda.ItensVendidos = ProdutosVendidos;
-
-            //talvez adicionar uma opção de por a data manual ou não
-            //e um if para verificar
-            venda.Data = DateTime.Now;
-
-            /*
-            if (venda.Vendedor is null)
-                return NotFound("Vendedor não encontrado");
-
-            if (venda.ItensVendidos.Count() <= 0)
-                return BadRequest("É preciso ter ao menos 1 produto");
-            */
+            venda.Data = Data;
+                       
             _context.Add(venda);
             _context.SaveChanges();
 
@@ -81,45 +66,50 @@ namespace PaymentAPI.Controllers
             if (venda is null)
                 return NotFound();
 
-
-            //loop para só permitir mudanças especificas
-
-            //nota: porque se comparar enums com == dá certo,
-            //mas se comparar com != a comparação buga e retorna tudo true? ;-;
-
-            //De: `Aguardando pagamento` Para: `Pagamento Aprovado`
-            //De: `Aguardando pagamento` Para: `Cancelada`
-            if (venda.StatusVenda == EnumStatusVenda.AguardandoPagamento
-                && (status == EnumStatusVenda.PagamentoAprovado || status == EnumStatusVenda.Cancelado))
-                {
-                    return SalvaStatus(venda, status);
-                }
-            //De: `Pagamento Aprovado` Para: `Enviado para Transportadora`
-            //De: `Pagamento Aprovado` Para: `Cancelada`
-            else if (venda.StatusVenda == EnumStatusVenda.PagamentoAprovado &&
-                status == EnumStatusVenda.EnviadoParaTransportadora || status == EnumStatusVenda.Cancelado)
+            if(StatusTeste(venda.StatusVenda, status))
             {
-                return SalvaStatus(venda, status);
+                venda.StatusVenda = status;
+
+                _context.Vendas.Update(venda);
+                _context.SaveChanges();
+
+                return Ok(venda);
             }
-            //De: `Enviado para Transportador`. Para: `Entregue`
-            else if (venda.StatusVenda == EnumStatusVenda.PagamentoAprovado &&
-               status == EnumStatusVenda.Entregue)
+            else
             {
-                return SalvaStatus(venda, status);
-            }
+                return BadRequest("Transição de Status Inválida!");
+            }                  
             
-            return BadRequest("Transição de Status Inválida!");
+            
 
         }
 
-        private ObjectResult SalvaStatus(Venda venda, EnumStatusVenda status)
+        private bool StatusTeste(EnumStatusVenda StatusAnterior, EnumStatusVenda StatusNovo)
         {
-            venda.StatusVenda = status;
-
-            _context.Vendas.Update(venda);
-            _context.SaveChanges();
-
-            return Ok(venda);
+            //De: `Aguardando pagamento` Para: `Pagamento Aprovado`
+            //De: `Aguardando pagamento` Para: `Cancelada`
+            if (StatusAnterior == EnumStatusVenda.AguardandoPagamento
+                && (StatusNovo == EnumStatusVenda.PagamentoAprovado || StatusNovo == EnumStatusVenda.Cancelado))
+            {
+                return true;
+            }
+            //De: `Pagamento Aprovado` Para: `Enviado para Transportadora`
+            //De: `Pagamento Aprovado` Para: `Cancelada`
+            else if (StatusAnterior == EnumStatusVenda.PagamentoAprovado &&
+                StatusNovo == EnumStatusVenda.EnviadoParaTransportadora || StatusNovo == EnumStatusVenda.Cancelado)
+            {
+                return true;
+            }
+            //De: `Enviado para Transportador`. Para: `Entregue`
+            else if (StatusAnterior == EnumStatusVenda.PagamentoAprovado &&
+               StatusNovo == EnumStatusVenda.Entregue)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
 
 
