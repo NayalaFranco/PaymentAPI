@@ -11,7 +11,6 @@ namespace PaymentAPI.Context
         }
 
         public DbSet<Venda> Vendas { get; set; }
-        public DbSet<Produto> Produtos { get; set; }
         public DbSet<Vendedor> Vendedores { get; set; }
 
     }
