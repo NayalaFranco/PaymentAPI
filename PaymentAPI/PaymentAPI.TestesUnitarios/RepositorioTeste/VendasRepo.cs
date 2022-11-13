@@ -13,9 +13,10 @@ namespace PaymentAPI.TestesUnitarios.RepositorioTeste
         {
             return new Venda
             {
+                Id = 0,
                 Data = new DateTime(2022, 11, 01, 10, 23, 00),
                 ItensVendidos = new ProdutosRepo().TresProdutos(),
-                StatusVenda = Enums.EnumStatusVenda.PagamentoAprovado,
+                StatusVenda = Enums.EnumStatusVenda.AguardandoPagamento,
                 Vendedor = new VendedorRepo().VendedorDaniel()
             };
         }
@@ -25,10 +26,11 @@ namespace PaymentAPI.TestesUnitarios.RepositorioTeste
         {
             return new Venda
             {
+                Id = 0,
                 Data = new DateTime(2022, 11, 10, 14, 45, 00),
                 ItensVendidos = new ProdutosRepo().QuatroProdutos(),
-                StatusVenda = Enums.EnumStatusVenda.Entregue,
-                Vendedor = new VendedorRepo().VendedorNayala()
+                StatusVenda = Enums.EnumStatusVenda.AguardandoPagamento,
+                Vendedor = new VendedorRepo().VendedoraNayala()
             };
         }
     }

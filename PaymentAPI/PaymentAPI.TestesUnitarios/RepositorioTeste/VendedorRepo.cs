@@ -13,6 +13,7 @@ namespace PaymentAPI.TestesUnitarios.RepositorioTeste
         {
             return new Vendedor
             {
+                Id = 0,
                 Nome = "Daniel",
                 Cpf = "111.111.111-11",
                 Email = "daniel@email.com",
@@ -20,10 +21,11 @@ namespace PaymentAPI.TestesUnitarios.RepositorioTeste
             };               
         }
 
-        public Vendedor VendedorNayala()
+        public Vendedor VendedoraNayala()
         {
             return new Vendedor
             {
+                Id = 0,
                 Nome = "Nayala",
                 Cpf = "222.222.222-22",
                 Email = "nay@email.com",
