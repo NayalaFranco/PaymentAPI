@@ -21,24 +21,30 @@ namespace PaymentAPI.Controllers
         [HttpGet("BuscarVenda/{id}")]
         public IActionResult BuscarVenda(int id)
         {
+            var vendaTest = _context.Vendas.Find(id);
+
+            if (vendaTest is null)
+                return NotFound();
+
             var venda = _context.Vendas.Where(x => x.Id == id)
                 .Include(v => v.Vendedor).Include(i => i.ItensVendidos);
 
-            if (venda.Any())
-                return NotFound();
 
             return Ok(venda);
         }
 
 
         [HttpPost("RegistrarVenda")]
-        public IActionResult RegistrarVenda([Required] int IdVendedor,[Required] DateTime Data, List<Produto> ProdutosVendidos)
+        public IActionResult RegistrarVenda([Required] int IdVendedor, [Required] DateTime Data, [Required] List<Produto> ProdutosVendidos)
         {
             Venda venda = new Venda();
             var vendedor = _context.Vendedores.Find(IdVendedor);
 
             if (vendedor is null)
                 return NotFound("Vendedor não encontrado.");
+
+            if (ProdutosVendidos is null)
+                return BadRequest("É preciso adicionar ao menos 1 produto");
 
             if (ProdutosVendidos.Count() == 0)
                 return BadRequest("É preciso adicionar ao menos 1 produto");
@@ -75,9 +81,6 @@ namespace PaymentAPI.Controllers
             {
                 return BadRequest("Transição de Status Inválida!");
             }                  
-            
-            
-
         }
 
         private bool StatusTeste(EnumStatusVenda StatusAnterior, EnumStatusVenda StatusNovo)
