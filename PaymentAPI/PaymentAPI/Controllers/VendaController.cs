@@ -21,32 +21,37 @@ namespace PaymentAPI.Controllers
         [HttpGet("BuscarVenda/{id}")]
         public IActionResult BuscarVenda(int id)
         {
+            // essa variavel é só para conferir se existe a venda na db
             var vendaTest = _context.Vendas.Find(id);
-
+            /* pois quando uso a outra forma o is null não funciona
+            e quando tentei com venda.Any() as vezes funcionava o if e as vezes não */
             if (vendaTest is null)
                 return NotFound();
 
+            /* sem esses includes não mostra os dados que vem de outras tabelas
+               o Find não funciona com o Include */
             var venda = _context.Vendas.Where(x => x.Id == id)
                 .Include(v => v.Vendedor).Include(i => i.ItensVendidos);
-
 
             return Ok(venda);
         }
 
 
         [HttpPost("RegistrarVenda")]
-        public IActionResult RegistrarVenda([Required] int IdVendedor, [Required] DateTime Data, [Required] List<Produto> ProdutosVendidos)
+        public IActionResult RegistrarVenda([Required] int IdVendedor, 
+            [Required] DateTime Data, [Required] List<Produto> ProdutosVendidos)
         {
+            /*  Ao invés de receber um json completo de venda
+                cria o objeto da venda aqui
+                e recebe os dados de forma separada para manipula-los
+                corretamente */
             Venda venda = new Venda();
             var vendedor = _context.Vendedores.Find(IdVendedor);
 
             if (vendedor is null)
                 return NotFound("Vendedor não encontrado.");
 
-            if (ProdutosVendidos is null)
-                return BadRequest("É preciso adicionar ao menos 1 produto");
-
-            if (ProdutosVendidos.Count() == 0)
+            if (ProdutosVendidos is null || ProdutosVendidos.Count() == 0)
                 return BadRequest("É preciso adicionar ao menos 1 produto");
 
             venda.StatusVenda = EnumStatusVenda.AguardandoPagamento;
@@ -83,25 +88,26 @@ namespace PaymentAPI.Controllers
             }                  
         }
 
-        private bool StatusTeste(EnumStatusVenda StatusAnterior, EnumStatusVenda StatusNovo)
+        private bool StatusTeste(EnumStatusVenda StatusAnterior,
+            EnumStatusVenda StatusNovo)
         {
-            //De: `Aguardando pagamento` Para: `Pagamento Aprovado`
-            //De: `Aguardando pagamento` Para: `Cancelada`
+            //De: "Aguardando pagamento" para: "Pagamento Aprovado" ou "Cancelada"
             if (StatusAnterior == EnumStatusVenda.AguardandoPagamento
-                && (StatusNovo == EnumStatusVenda.PagamentoAprovado || StatusNovo == EnumStatusVenda.Cancelado))
+                && (StatusNovo == EnumStatusVenda.PagamentoAprovado 
+                || StatusNovo == EnumStatusVenda.Cancelado))
             {
                 return true;
             }
-            //De: `Pagamento Aprovado` Para: `Enviado para Transportadora`
-            //De: `Pagamento Aprovado` Para: `Cancelada`
+            //De: "Pagamento Aprovado" para: "Enviado para Transportadora" ou "Cancelada"
             else if (StatusAnterior == EnumStatusVenda.PagamentoAprovado &&
-                (StatusNovo == EnumStatusVenda.EnviadoParaTransportadora || StatusNovo == EnumStatusVenda.Cancelado))
+                (StatusNovo == EnumStatusVenda.EnviadoParaTransportadora 
+                || StatusNovo == EnumStatusVenda.Cancelado))
             {
                 return true;
             }
-            //De: `Enviado para Transportador`. Para: `Entregue`
-            else if (StatusAnterior == EnumStatusVenda.EnviadoParaTransportadora &&
-               StatusNovo == EnumStatusVenda.Entregue)
+            //De: "Enviado para Transportador" para: "Entregue"
+            else if (StatusAnterior == EnumStatusVenda.EnviadoParaTransportadora 
+                && StatusNovo == EnumStatusVenda.Entregue)
             {
                 return true;
             }
