@@ -17,6 +17,7 @@ namespace PaymentAPI.Controllers
             _context = context;
         }
 
+        // metodo somente para gerar uns vendedores para testes rapidos via swagger
         [HttpPost("GeraVendedoresTeste")]
         public IActionResult GeraVendedoresTeste()
         {
@@ -39,7 +40,9 @@ namespace PaymentAPI.Controllers
 
 
         [HttpPost("AdicionarVendedor")]
-        public IActionResult AdicionarVendedor([Required] string Nome, [Required] string Cpf, [Required][EmailAddress] string Email, [Required] string Telefone)
+        public IActionResult AdicionarVendedor([Required] string Nome, [Required] string Cpf,
+            //mais facil manipular entrada de email usando DataAnnotations
+            [Required][EmailAddress] string Email, [Required] string Telefone)
         {
             Vendedor vendedor = new Vendedor();
 
@@ -54,6 +57,7 @@ namespace PaymentAPI.Controllers
             return CreatedAtAction(nameof(BuscarVendedor), new { id = vendedor.Id }, vendedor);
         }
 
+        // Deletar um vendedor vinculado a uma venda pode causar um problemão
         /*
         [HttpDelete("DeletarVendedor/{id}")]
         public IActionResult DeletarVendedor(int id)
